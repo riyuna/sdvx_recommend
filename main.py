@@ -42,3 +42,14 @@ print(md.head(20))
 
 sd = pd.read_csv('data/song_id.csv')
 print(sd.head(20))
+
+user_df=pd.read_csv('data/user_data.csv').drop(['id', 'sdvx_id', 'name', 'volforce'], axis=1)
+
+songs_corr = user_df.corr(method='pearson')
+songs_corr.to_csv('data/song_pearson_correlation.csv', encoding='utf-8-sig')
+
+songs_corr_kendall = user_df.corr(method='kendall')
+songs_corr_kendall.to_csv('data/song_kendall_correlation.csv', encoding='utf-8-sig')
+
+songs_corr_spearman = user_df.corr(method='spearman')
+songs_corr_spearman.to_csv('data/song_spearman_correlation.csv', encoding='utf-8-sig')

@@ -9,4 +9,5 @@ print(song_id_map)
 
 with open('data/song_data.csv', encoding='utf-8') as f:
     parser = csv.reader(f)
+    for row in parser:print(row)
     #todo
