@@ -35,21 +35,50 @@ def difficulty_imperial_1(x):
 md['crim_score'] = md.apply(difficulty_crimson, axis=1)
 md['impe1_score'] = md.apply(difficulty_imperial_1, axis=1)
 md = md.sort_values('crim_score', ascending=False)
-print(md.head(20))
+# print(md.head(20))
 
 md=md.sort_values('impe1_score', ascending=False)
-print(md.head(20))
+# print(md.head(20))
 
 sd = pd.read_csv('data/song_id.csv')
-print(sd.head(20))
+# print(sd.head(20))
 
-user_df=pd.read_csv('data/user_data.csv').drop(['id', 'sdvx_id', 'name', 'volforce'], axis=1)
+user_data_df=pd.read_csv('data/user_data.csv')
+user_df = user_data_df.drop(['id', 'sdvx_id', 'name', 'volforce'], axis=1)
+
+print(user_df)
 
 songs_corr = user_df.corr(method='pearson')
 songs_corr.to_csv('data/song_pearson_correlation.csv', encoding='utf-8-sig')
 
-songs_corr_kendall = user_df.corr(method='kendall')
-songs_corr_kendall.to_csv('data/song_kendall_correlation.csv', encoding='utf-8-sig')
+# songs_corr_kendall = user_df.corr(method='kendall')
+# songs_corr_kendall.to_csv('data/song_kendall_correlation.csv', encoding='utf-8-sig')
 
-songs_corr_spearman = user_df.corr(method='spearman')
-songs_corr_spearman.to_csv('data/song_spearman_correlation.csv', encoding='utf-8-sig')
+# songs_corr_spearman = user_df.corr(method='spearman')
+# songs_corr_spearman.to_csv('data/song_spearman_correlation.csv', encoding='utf-8-sig')
+
+corr_dict = dict()
+
+song_name_list = []
+for song_name in songs_corr:
+    song_name_list.append(song_name)
+
+for song in song_name_list:
+    song_col = songs_corr[song]
+    song_dict = dict()
+    for song_2 in song_name_list:
+        song_dict[song_2]=song_col[song_2]
+    corr_dict[song]=song_dict
+
+def get_expected_score(user_data:dict, expect_song:str):
+    num=0
+    deno=0
+    for song in song_name_list:
+        if song==expect_song:continue
+        if song in user_data:
+            val = corr_dict[song][expect_song]
+            num+=val*user_data[song]
+            deno+=val
+    return num/deno
+
+print(user_data_df.filter(like='KUREHA'))
